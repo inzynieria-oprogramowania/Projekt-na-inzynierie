@@ -36,10 +36,9 @@ function wygeneruj($tabela, $plik) {
 
     $kalendarz = "BEGIN:VEVENT
 DTEND: $data"."$format"."T"."$godzina2"."00
-UID: $identyfikator
-DTSTAMP: $czas 
+UID: $identyfikator 
 LOCATION: $r[3]
-DESCRIPTION: $r[2]
+SUMMARY: $r[2]
 DTSTART: $data"."$format"."T"."$godzina"."00
 END:VEVENT\n";
 
@@ -94,7 +93,7 @@ function stworz($nazwa, $tabela) {
   switch ($nazwa)
   {
     case 'wygeneruj':
-      wygeneruj('ical','kalendarz.ical');
+      wygeneruj('ical','kalendarz.ics');
       break;
     
     case 'wyczysc': 
@@ -102,7 +101,7 @@ function stworz($nazwa, $tabela) {
       break;
     
     case 'pobierz':
-      wypisz_naglowek('kalendarz.ical');
+      wypisz_naglowek('kalendarz.ics');
       break;
     
     default:

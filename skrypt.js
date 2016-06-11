@@ -49,8 +49,7 @@ function wyczysc()
 }
 function pobierz()
 {
-    var plik = 'kalendarz.ical';
     xmlHttp.open("GET", "skrypt.php?adres=pobierz", true);
-    window.location = 'skrypt.php?adres=pobierz';
+    window.location = 'kalendarz.ics';
     xmlHttp.send(null);
 }
