@@ -10,10 +10,10 @@ function odpowiedz()
 {
     if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
 	{
-	     dane = xmlHttp.responseXML;
-	     glowny = dane.documentElement;
-	     tekst = glowny.firstChild.data;
-	    document.getElementById("pole").innerHTML = '<i>' + tekst + '</i>';
+	     //dane = xmlHttp.responseXML;
+	     //glowny = dane.documentElement;
+	    //tekst = glowny.firstChild.data;
+	    document.getElementById("pole").innerHTML = xmlHttp.responseText + '<br />';
 	}
 }
 function generuj()
@@ -32,7 +32,7 @@ function wygeneruj()
 	    dane2 = xmlHttp.responseXML;
 	    glowny2 = dane2.documentElement;
 	    tekst2 = glowny2.firstChild.data;
-	    document.getElementById("kod").innerHTML = '<i>' + tekst2 + '</i>';
+	    document.getElementById("kod").innerHTML = xmlHttp.responseText;
 	}
 }
 
