@@ -11,7 +11,7 @@ function wygeneruj($tabela, $plik) {
   $data = $_GET['date'];
   $dzien = $_GET['dzien'];
   $wynik = mysql_query("select * from $tabela");
-  $naglowek = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nCALSCALE:GREGORIAN\n";
+  $naglowek = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nCALSCALE:GREGORIAN<br/>";
   $plik = fopen("$plik", "w");
   if(!($plik)) { exit("Nie można otworzyć pliku!</response>"); }
   fwrite($plik, $naglowek);
@@ -34,13 +34,13 @@ function wygeneruj($tabela, $plik) {
     $godzina2 = str_replace(" ","",$godzina);
     $format = sprintf("%'.02d", $dzien);
 
-    $kalendarz = "BEGIN:VEVENT
-DTEND: $data"."$format"."T"."$godzina2"."00
-UID: $identyfikator 
-LOCATION: $r[3]
-SUMMARY: $r[2]
-DTSTART: $data"."$format"."T"."$godzina"."00
-END:VEVENT\n";
+    $kalendarz = "BEGIN:VEVENT<br/>
+DTEND: $data"."$format"."T"."$godzina2"."00<br/>
+UID: $identyfikator<br/> 
+LOCATION: $r[3]<br/>
+SUMMARY: $r[2]<br/>
+DTSTART: $data"."$format"."T"."$godzina"."00<br/>
+END:VEVENT<br/>";
 
     echo $kalendarz;
     fwrite($plik, $kalendarz);
@@ -73,14 +73,22 @@ function stworz($nazwa, $tabela) {
   $dom->preserveWhiteSpace = false;
   $tables = $dom->getElementsByTagName('table');
   $rows = $tables->item(1)->getElementsByTagName('tr');
+  $i = 0;
+  $dni = array("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek");
+  $r = 0;
   foreach($rows as $row) {
+  if($i == 0) { $i++; continue; }
+  else {
     $cols = $row->getElementsByTagName('td');
     $zmienna1 = $cols->item(1)->nodeValue.' ';
+    $zmienna0 = $cols->item(0)->nodeValue.' ';
+   if($zmienna0 == 'A') { $zmienna0 = '';}
     $zmienna2 = $cols->item(2)->nodeValue.' ';
     $zmienna3 = $cols->item(3)->nodeValue.' ';
     $zmienna4 = $cols->item(6)->nodeValue.' ';
-    echo "$zmienna1 $zmienna2 $zmienna3 $zmienna4";
+    echo "$zmienna0 $zmienna1 $zmienna2 $zmienna3 $zmienna4 <br/>";
     mysql_query("insert into ical values ('$zmienna1','$zmienna2','$zmienna3','$zmienna4')");
+    } 
   }
 }
 
@@ -89,7 +97,7 @@ function stworz($nazwa, $tabela) {
   echo '<?xml version="1.0" encoding="utf-8" standalone="yes"?>';
   echo '<response>';
   $nazwa = $_GET['adres'];
-  polacz('root','pokurwa','projekt');
+  polacz('kamil18213','projekt18213','projekt_io_cba_pl');
   switch ($nazwa)
   {
     case 'wygeneruj':
