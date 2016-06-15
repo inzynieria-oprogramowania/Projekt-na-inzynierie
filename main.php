@@ -14,7 +14,7 @@
 <div class="cialo">
     <input type="button" value="NEW" id = "new" onclick="nowy();"  />
     <input type="button" id="generate" value="Generate iCal" onclick="generuj();" /> <br /> <br />
-    <img src="icon_url.png" align="top">    <input type="text" id="url" style="background-color: #C0C0C0;" />
+    <img src="resources/icon_url.png">    <input type="text" id="url"/>
     Data:
     <?php
 echo '<select id="dzien">';
@@ -35,7 +35,7 @@ echo "<option> $year </option>";
 echo '</select>'; 
 ?>
 <br/> <br/>
-    <div id="pole" width = '400px' height ='200px'> </div>
+    <div id="pole"> </div>
     <input type="button" value="Reset" id="reset" onclick="resetuj();"/> 
     <input type="button" value="Download iCal" id="download" onclick="pobierz();" />
     <div id="informacja" />
