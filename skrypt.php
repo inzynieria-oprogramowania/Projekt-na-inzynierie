@@ -1,7 +1,7 @@
 <?php
 
 function polacz($uzytkownik, $haslo, $baza) {
-  $sql = mysql_connect('localhost', $uzytkownik, $haslo);
+  $sql = mysql_connect('mysql.cba.pl', $uzytkownik, $haslo);
   if(!($sql)) { exit("Nie można połączyć się z bazą danych!</response>"); }
   $select = mysql_select_db($baza, $sql);
   if(!($select)) { exit("Nie można wybrać bazy!</response>"); }
@@ -11,13 +11,22 @@ function wygeneruj($tabela, $plik) {
   $data = $_GET['date'];
   $dzien = $_GET['dzien'];
   $wynik = mysql_query("select * from $tabela");
-  $naglowek = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nCALSCALE:GREGORIAN<br/>";
-  $plik = fopen("$plik", "w");
+  $naglowek = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nCALSCALE:GREGORIAN\n";
+ 
+//sprawdzenie czy poprawnie wygenerowano ical 
+$query=mysql_query("SELECT COUNT('przedmiot') AS razem FROM $tabela");
+$a=mysql_fetch_array($query);
+
+if($a['razem']!=0){
+
+$plik = fopen("$plik", "w");
   if(!($plik)) { exit("Nie można otworzyć pliku!</response>"); }
   fwrite($plik, $naglowek);
-  echo $naglowek;
+  
   $i = 0;
   while($r = mysql_fetch_row($wynik)) {
+
+
     if($i == 0 || $i ==1) {
       $i++;
       continue;
@@ -34,21 +43,32 @@ function wygeneruj($tabela, $plik) {
     $godzina2 = str_replace(" ","",$godzina);
     $format = sprintf("%'.02d", $dzien);
 
-    $kalendarz = "BEGIN:VEVENT<br/>
-DTEND: $data"."$format"."T"."$godzina2"."00<br/>
-UID: $identyfikator<br/> 
-LOCATION: $r[3]<br/>
-SUMMARY: $r[2]<br/>
-DTSTART: $data"."$format"."T"."$godzina"."00<br/>
-END:VEVENT<br/>";
+    $kalendarz = "BEGIN:VEVENT
+DTEND: $data"."$format"."T"."$godzina2"."00
+UID: $identyfikator
+LOCATION: $r[3]
+SUMMARY: $r[2]
+DTSTART: $data"."$format"."T"."$godzina"."00
+END:VEVENT\n";
 
-    echo $kalendarz;
+    
     fwrite($plik, $kalendarz);
   }
+  
+
+  echo 'Poprawnie wygenerowano plik ical';
   $zakonczenie = "END:VCALENDAR\n";
-  echo $zakonczenie;
   fwrite($plik, $zakonczenie);
   fclose($plik);
+
+}
+
+else{
+echo "Niepoprawnie wygenerowano plik ical. Naciśnij przycisk Reset, upewnij się, że link url jest poprawny, <br /> wybierz datę, a następnie wciśnij New";
+
+}
+
+
 }
 
 function wypisz_naglowek($plik) {
@@ -82,7 +102,7 @@ function stworz($nazwa, $tabela) {
     $cols = $row->getElementsByTagName('td');
     $zmienna1 = $cols->item(1)->nodeValue.' ';
     $zmienna0 = $cols->item(0)->nodeValue.' ';
-   if($zmienna0 == 'A') { $zmienna0 = '';}
+   if($zmienna0 == 'A') { $zmienna0 = 'test';}
     $zmienna2 = $cols->item(2)->nodeValue.' ';
     $zmienna3 = $cols->item(3)->nodeValue.' ';
     $zmienna4 = $cols->item(6)->nodeValue.' ';
@@ -92,6 +112,9 @@ function stworz($nazwa, $tabela) {
   }
 }
 
+function wyczysc($nazwa_pliku){
+  unlink($nazwa_pliku);
+}  
 
   header('Content-Type: text/xml');
   echo '<?xml version="1.0" encoding="utf-8" standalone="yes"?>';
@@ -105,6 +128,7 @@ function stworz($nazwa, $tabela) {
       break;
     
     case 'wyczysc': 
+      wyczysc('kalendarz.ics');
       mysql_query("delete from ical");
       break;
     
