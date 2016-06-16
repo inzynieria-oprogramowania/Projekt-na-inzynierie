@@ -8,11 +8,14 @@ function polacz($uzytkownik, $haslo, $baza) {
 }
 
 function wygeneruj($tabela, $plik) {
+  $dni = array("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek");
   $data = $_GET['date'];
   $dzien = $_GET['dzien'];
   $wynik = mysql_query("select * from $tabela");
   $naglowek = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nCALSCALE:GREGORIAN\n";
- 
+  $status = 0;
+  $licznik = 0;
+
 //sprawdzenie czy poprawnie wygenerowano ical 
 $query=mysql_query("SELECT COUNT('przedmiot') AS razem FROM $tabela");
 $a=mysql_fetch_array($query);
@@ -22,40 +25,51 @@ if($a['razem']!=0){
 $plik = fopen("$plik", "w");
   if(!($plik)) { exit("Nie można otworzyć pliku!</response>"); }
   fwrite($plik, $naglowek);
-  
-  $i = 0;
   while($r = mysql_fetch_row($wynik)) {
-
-
-    if($i == 0 || $i ==1) {
-      $i++;
-      continue;
-    }
-    if(!(strstr($r[0],":"))) {
+    if (strstr($r[0], $dni[$licznik])) {
+     $licznik++; 
+continue;
+    }elseif (strstr($r[0], $dni[$licznik+1])){
+$licznik++;
       $dzien++;
+      continue;
+    }elseif (strstr($r[0], $dni[$licznik+2])){
+    if($licznik > 0){
+$licznik=$licznik+2;
+$dzien= $dzien+3;
+}else{
+$licznik=$licznik+2;
+      $dzien= $dzien+2;
+      continue;
+}
+    }elseif (strstr($r[0], $dni[$licznik+3])){
+$licznik=$licznik+3;
+      $dzien= $dzien+3;
+      continue;
+    }elseif (strstr($r[0], $dni[$licznik+4])){
+$licznik=$licznik+4;
+      $dzien= $dzien+4;
       continue;
     }
     $identyfikator = uniqid();
     $czas = time();
-    $godzina = str_replace(":","",$r[0]);
+    $godzina = str_replace(":","",$r[1]);
     $godzina = str_replace(" ","",$godzina);
-    $godzina2 = str_replace(":","",$r[1]);
-    $godzina2 = str_replace(" ","",$godzina);
+    $godzina2 = str_replace(":","",$r[2]);
+    $godzina2 = str_replace(" ","",$godzina2);
     $format = sprintf("%'.02d", $dzien);
 
     $kalendarz = "BEGIN:VEVENT
 DTEND: $data"."$format"."T"."$godzina2"."00
 UID: $identyfikator
-LOCATION: $r[3]
-SUMMARY: $r[2]
+LOCATION: $r[4]
+SUMMARY: $r[3]
 DTSTART: $data"."$format"."T"."$godzina"."00
 END:VEVENT\n";
-
-    
+  
     fwrite($plik, $kalendarz);
   }
   
-
   echo 'Poprawnie wygenerowano plik ical';
   $zakonczenie = "END:VCALENDAR\n";
   fwrite($plik, $zakonczenie);
@@ -72,15 +86,14 @@ echo "Niepoprawnie wygenerowano plik ical. Naciśnij przycisk Reset, upewnij si�
 }
 
 function wypisz_naglowek($plik) {
-  if (file_exists($plik)) {
-    header('Content-Description: File Transfer');
-    header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename="'.basename($plik).'"');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($plik));
-  }
+  
+if (file_exists($plik)) {
+
+  echo "true";
+  }else{
+  echo "false";
+}
+
 }
 
 function stworz($nazwa, $tabela) {
@@ -94,20 +107,35 @@ function stworz($nazwa, $tabela) {
   $tables = $dom->getElementsByTagName('table');
   $rows = $tables->item(1)->getElementsByTagName('tr');
   $i = 0;
-  $dni = array("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek");
+  $dni = array("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela","Nieregularne");
   $r = 0;
+  $status = 0;
   foreach($rows as $row) {
-  if($i == 0) { $i++; continue; }
+
+  
+  
+if($i == 0) { $i++; continue; }
   else {
     $cols = $row->getElementsByTagName('td');
     $zmienna1 = $cols->item(1)->nodeValue.' ';
     $zmienna0 = $cols->item(0)->nodeValue.' ';
-   if($zmienna0 == 'A') { $zmienna0 = 'test';}
     $zmienna2 = $cols->item(2)->nodeValue.' ';
     $zmienna3 = $cols->item(3)->nodeValue.' ';
     $zmienna4 = $cols->item(6)->nodeValue.' ';
+
+if (strstr($zmienna0, $dni[5]) || strstr($zmienna0, $dni[6]) || strstr($zmienna0, $dni[7])) {break;}
+
     echo "$zmienna0 $zmienna1 $zmienna2 $zmienna3 $zmienna4 <br/>";
-    mysql_query("insert into ical values ('$zmienna1','$zmienna2','$zmienna3','$zmienna4')");
+for($j=0; $j < 5; $j++){
+    if (strstr($zmienna0, $dni[$j])) {
+      mysql_query("insert into ical values ('$zmienna0','$zmienna1','$zmienna2','$zmienna3','$zmienna4')");
+      $status = 1;
+    }
+}
+if($status == 0){
+  mysql_query("insert into ical values ('NULL','$zmienna1','$zmienna2','$zmienna3','$zmienna4')");
+}
+$status = 0;
     } 
   }
 }
@@ -141,4 +169,4 @@ function wyczysc($nazwa_pliku){
   
  }
 echo '</response>';
-?>
+?>		
