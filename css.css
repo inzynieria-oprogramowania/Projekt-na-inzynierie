@@ -4,44 +4,74 @@ body {
 	font-family: franklin;
 	font-size: 18px;
 	color: white;
-	vertical-align: center;
-	
-	
+	vertical-align: center;	
+    text-align: center;	
 }
-
 @font-face {
     font-family: franklin;
     src: url(resources/franklin.ttf);
 }
 
-
-
 .cialo {
-   margin:auto;
-   padding:0;
-   position:relative;
-   text-align:center;
-
+   
+     margin:auto;
+     padding:0;
+     position:relative;
 }
-
+.button-top{
+	 width:500px;
+	 position:relative;
+	 left:50%;
+	 margin-left: -250px;
+	 margin-top:10px;
+	 margin-bottom: 10px;
+	 float:left;
+}
+.url{
+	 width:500px;
+	 position:relative;
+	 left:50%;
+	 margin-left: -250px;
+	 margin-top: 10px;
+	 margin-bottom: 10px;
+	 clear:left;
+}
+.button-bottom{
+	 width:500px;
+	 position:relative;
+	 left:50%;
+	 margin-left: -250px;
+	 margin-top:13px;
+	 margin-bottom: 10px;
+	 clear:left;
+}
+#url-image{
+	 background-image: url("resources/icon_url.png");
+	 width:25px;
+	 height:30px;
+	 position:relative;
+	 float:left;
+	 margin-right:5px;
+	 margin-bottom:10px;
+	 margin-left:110px;
+}
 #url {
 	
 	background-color: #C0C0C0;
 	border-color: black;
 	border-width: 1px;
 	height: 18px;
-}
 
+}
 #pole {
-   margin:auto;
-   padding:0;
-   position:relative;
-   left: 35%;
-   text-align:left;
+	margin-top:10px;
+	margin-bottom: 10px;
+	padding:0;
+	position:relative;
+	left: 35%;
+	text-align:left;
 
 }
-
-
 #new,#reset {
 	background: url('resources/bg-button.gif');
 	background-repeat: repeat-x;
@@ -52,10 +82,8 @@ body {
 	color: #bababa;
 	border-color: black;
 	border-width: 1px;
-	
+    position: relative;
 }
-
-
 #generate,#download {
 	background: url('resources/bg-button.gif');
 	background-repeat: repeat-x;
@@ -66,4 +94,5 @@ body {
 	color: #bababa;
 	border-color: black;
 	border-width: 1px;
-}
+    position: relative;
+}			
